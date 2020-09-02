@@ -1,0 +1,5 @@
+{
+  "name": "@apility/message-channel",
+  "main": "./src/client.js",
+  "version": "0.0.1"
+}
