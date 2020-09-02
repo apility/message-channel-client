@@ -4,7 +4,7 @@ Lets you connect to the Netflex MessageChannel API
 
 ## Usage
 ```javascript
-import MessageChannel from '@netflex/message-channel'
+import MessageChannel from '@apility/message-channel'
 
 let channelKey = '00000000-0000-0000-0000-000000000000' // Can be generated server side, or provided manually
 
