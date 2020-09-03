@@ -5,7 +5,7 @@ const createSocket = (channel, topic, handler) => {
   return socket
 }
 
-class MessageChannel {
+export default class MessageChannel {
   constructor(channel, topic = undefined) {
     this.listeners = []
 
