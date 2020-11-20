@@ -19,7 +19,15 @@ export default class MessageChannel {
         this.fireEvent('connect',  this)
       }
 
-      this.fireEvent('event', parsedMessage)
+      if (parsedMessage.event) {
+        this.fireEvent(parsedMessage.event, parsedMessage)
+      }
+
+      if (parsedMessage.data && parsedMessage.data.event) {
+        this.fireEvent(parsedMessage.data.event, parsedMessage.data)
+      }
+
+      this.fireEvent('message', parsedMessage)
     }
 
     let timeout = 1
