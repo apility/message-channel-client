@@ -13,6 +13,14 @@ const channel = new MessageChannel(channelKey)
 channel.on('message', message => console.log(message))
 ```
 
+## Promise based factory
+
+You can alternatively use the static connect method
+
+```javascript
+const channel = await MessageChannel.connect(channelKey, 'public')
+```
+
 ## Listening for a specific topic
 
 ```javascript
@@ -24,3 +32,4 @@ channel.on('connect', () => {
   channel.setTopic('news')
 })
 ```
+

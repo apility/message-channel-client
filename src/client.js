@@ -7,13 +7,19 @@ const createSocket = (channel, topic, handler) => {
 
 export default class MessageChannel {
   constructor(channel, topic = undefined) {
+    this.clientId = undefined
     this.listeners = []
 
     const handler = message => {
       const parsedMessage = JSON.parse(message.data)
-      this.listeners.filter(listener => listener.event === 'message').forEach(listener => {
-        listener.handler(parsedMessage)
-      })
+
+      if (parsedMessage.event === 'connected') {
+        this.clientId = parsedMessage.clientId
+        this.fireEvent('connected',  this)
+        this.fireEvent('connect',  this)
+      }
+
+      this.fireEvent('event', parsedMessage)
     }
 
     let timeout = 1
@@ -23,9 +29,6 @@ export default class MessageChannel {
 
       this.socket.onopen = () => {
         timeout = 1
-        this.listeners.filter(listener => listener.event === 'connected').forEach(listener => {
-          listener.handler(this)
-        })
       }
 
       this.socket.onclose = () => {
@@ -44,6 +47,19 @@ export default class MessageChannel {
     }
 
     connect()
+  }
+
+  static connect (channel, topic = undefined) {
+    const client = new MessageChannel(channel, topic)
+    return new Promise(resolve => {
+      client.on('connected', resolve)
+    })
+  }
+
+  fireEvent(event, message) {
+    this.listeners.filter(listener => listener.event === event).forEach(listener => {
+      listener.handler(message)
+    })
   }
 
   sendCommand(type, value) {
