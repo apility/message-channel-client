@@ -1,5 +1,5 @@
 const createSocket = (channel, topic, handler) => {
-  const socket = new WebSocket(`wss:/broadcast.netflexapp.com?channel=${channel}${topic ? `&topic=${topic}` : ''}`)
+  const socket = new WebSocket(`wss:/${channel}.broadcast.netflexapp.com?channel=${channel}${topic ? `&topic=${topic}` : ''}`)
   socket.onmessage = handler
 
   return socket
