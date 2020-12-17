@@ -6,9 +6,13 @@ const createSocket = (channel, topic, handler) => {
 }
 
 export default class MessageChannel {
-  constructor(channel, topic = undefined) {
+  constructor(channel, topic = undefined, options = { pingInterval = 30 }) {
     this.clientId = undefined
     this.listeners = []
+    this.keepAlive = null
+    this.options = {
+      pingInterval
+    }
 
     const handler = message => {
       const parsedMessage = JSON.parse(message.data)
@@ -33,7 +37,12 @@ export default class MessageChannel {
     let timeout = 1
 
     const connect = () => {
+      if (this.keepAlive) {
+        clearInterval(this.keepAlive)
+      }
+
       this.socket = createSocket(channel, topic, handler)
+      this.keepAlive = setInterval(() => this.socket.send('keep-alive', this.options.pingInterval * 1000))
 
       this.socket.onopen = () => {
         timeout = 1
