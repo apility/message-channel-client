@@ -6,7 +6,7 @@ const createSocket = (channel, topic, handler) => {
 }
 
 export default class MessageChannel {
-  constructor(channel, topic = undefined, options = { pingInterval = 30 }) {
+  constructor(channel, topic = undefined, { pingInterval = 30 }) {
     this.clientId = undefined
     this.listeners = []
     this.keepAlive = null
