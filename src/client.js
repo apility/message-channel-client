@@ -42,10 +42,17 @@ export default class MessageChannel {
       }
 
       this.socket = createSocket(channel, topic, handler)
-      this.keepAlive = setInterval(() => this.socket.send('keep-alive', this.options.pingInterval * 1000))
 
       this.socket.onopen = () => {
         timeout = 1
+
+        if (this.keepAlive) {
+          clearInterval(this.keepAlive)
+        }
+
+        setTimeout(() => {
+          this.keepAlive = setInterval(() => this.sendCommand('keep-alive', true), (this.options.pingInterval ? this.options.pingInterval : 30) * 1000)
+        })
       }
 
       this.socket.onclose = () => {
@@ -66,8 +73,8 @@ export default class MessageChannel {
     connect()
   }
 
-  static connect (channel, topic = undefined) {
-    const client = new MessageChannel(channel, topic)
+  static connect (channel, topic = undefined, options = {}) {
+    const client = new MessageChannel(channel, topic, options)
     return new Promise(resolve => {
       client.on('connected', resolve)
     })
