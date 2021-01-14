@@ -8,12 +8,13 @@ const createSocket = (channel, topic, handler, host = null) => {
 }
 
 export default class MessageChannel {
-  constructor(channel, topic = undefined, { pingInterval = 30 }) {
+  constructor(channel, topic = undefined, { pingInterval = 30, host = null }) {
     this.clientId = undefined
     this.listeners = []
     this.keepAlive = null
     this.options = {
-      pingInterval
+      pingInterval,
+      host
     }
 
     const handler = message => {
@@ -43,7 +44,7 @@ export default class MessageChannel {
         clearInterval(this.keepAlive)
       }
 
-      this.socket = createSocket(channel, topic, handler)
+      this.socket = createSocket(channel, topic, handler, this.options.host)
 
       this.socket.onopen = () => {
         timeout = 1
