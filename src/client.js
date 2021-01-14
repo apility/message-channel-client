@@ -1,6 +1,6 @@
-const createSocket = (channel, topic, handler, host = null) => {
-  host = host ? host : `wss:/${channel}.broadcast.netflexapp.com`
-  const socket = new WebSocket(`${host}?channel=${channel}${topic ? `&topic=${topic}` : ''}`)
+const createSocket = (channel, topic, handler, host = 'broadcast.netflexapp.com', prefixChannel = true, secure = true) => {
+  const url = `${secure ? 'wss' : 'ws'}:/${prefixChannel ? `${channel}.` : ''}${host}?channel=${channel}${topic ? `&topic=${topic}` : ''}`
+  const socket = new WebSocket(url)
 
   socket.onmessage = handler
 
@@ -8,13 +8,15 @@ const createSocket = (channel, topic, handler, host = null) => {
 }
 
 export default class MessageChannel {
-  constructor(channel, topic = undefined, { pingInterval = 30, host = null }) {
+  constructor(channel, topic = undefined, { pingInterval = 30, host = 'broadcast.netflexapp.com', prefixChannel = true, secure = true }) {
     this.clientId = undefined
     this.listeners = []
     this.keepAlive = null
     this.options = {
       pingInterval,
-      host
+      host,
+      prefixChannel,
+      secure
     }
 
     const handler = message => {
@@ -44,7 +46,7 @@ export default class MessageChannel {
         clearInterval(this.keepAlive)
       }
 
-      this.socket = createSocket(channel, topic, handler, this.options.host)
+      this.socket = createSocket(channel, topic, handler, this.options.host, this.options.prefixChannel, this.options.secure)
 
       this.socket.onopen = () => {
         timeout = 1
