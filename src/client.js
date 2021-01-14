@@ -1,5 +1,7 @@
-const createSocket = (channel, topic, handler) => {
-  const socket = new WebSocket(`wss:/${channel}.broadcast.netflexapp.com?channel=${channel}${topic ? `&topic=${topic}` : ''}`)
+const createSocket = (channel, topic, handler, host = null) => {
+  host = host ? host : `wss:/${channel}.broadcast.netflexapp.com`
+  const socket = new WebSocket(`${host}?channel=${channel}${topic ? `&topic=${topic}` : ''}`)
+
   socket.onmessage = handler
 
   return socket
